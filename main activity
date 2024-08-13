@@ -1382,7 +1382,18 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
 
+
+        Intent i2 = new Intent(MainActivity.this, LevelsActivity.class);
+        i2.putExtra("code", code);
+        i2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i2);
+        finish();
+        overridePendingTransition(R.anim.goup, R.anim.godown);
+    }
 
     public void NewCountDown() {
 
@@ -2032,11 +2043,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-
+ 
     @Override
     public void onBackPressed() {
         showRatingDialog();
     }
+
 
     private void showRatingDialog() {
         ratingDialog = new Dialog(this);
@@ -2049,11 +2061,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 if (rating > 3) {
                     openPlayStore();
                 } else {
-                    proceedWithBackAction();
+                    finishApp();
                 }
             }
         });
-        rating_cancel_btn.setOnClickListener(v -> proceedWithBackAction());
+        rating_cancel_btn.setOnClickListener(v -> finishApp());
         ratingDialog.show();
     }
 
@@ -2073,20 +2085,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 Toast.makeText(this, "Could not open Play Store", Toast.LENGTH_SHORT).show();
             }
         } finally {
-            proceedWithBackAction();
+            finishApp();
         }
     }
 
-    private void proceedWithBackAction() {
+    private void finishApp() {
         if (ratingDialog != null && ratingDialog.isShowing()) {
             ratingDialog.dismiss();
         }
-        Intent i2 = new Intent(MainActivity.this, LevelsActivity.class);
-        i2.putExtra("code", code);
-        i2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(i2);
         finish();
-        overridePendingTransition(R.anim.goup, R.anim.godown);
     }
-
 }
