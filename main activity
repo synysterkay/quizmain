@@ -1382,18 +1382,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
 
-
-        Intent i2 = new Intent(MainActivity.this, LevelsActivity.class);
-        i2.putExtra("code", code);
-        i2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(i2);
-        finish();
-        overridePendingTransition(R.anim.goup, R.anim.godown);
-    }
 
     public void NewCountDown() {
 
@@ -2043,56 +2032,62 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
- 
-    @Override
-    public void onBackPressed() {
-        showRatingDialog();
+
+    override fun onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            showRatingDialog()
+        } else {
+            this.doubleBackToExitPressedOnce = true
+            Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show()
+
+            Handler(Looper.getMainLooper()).postDelayed({ doubleBackToExitPressedOnce = false }, 2000)
+        }
     }
 
-
-    private void showRatingDialog() {
-        ratingDialog = new Dialog(this);
-        ratingDialog.setContentView(R.layout.dialog_rating);
-        ratingDialog.setCancelable(false);
-        TextView rating_cancel_btn = ratingDialog.findViewById(R.id.rating_cancel);
-        RatingBar ratingBar = ratingDialog.findViewById(R.id.ratingBar);
-        ratingBar.setOnRatingBarChangeListener((ratingBar1, rating, fromUser) -> {
+    private fun showRatingDialog() {
+        ratingDialog = Dialog(this)
+        ratingDialog.setContentView(R.layout.dialog_rating)
+        ratingDialog.setCancelable(false)
+        val ratingCancelBtn: TextView = ratingDialog.findViewById(R.id.rating_cancel)
+        val ratingBar: RatingBar = ratingDialog.findViewById(R.id.ratingBar)
+        ratingBar.setOnRatingBarChangeListener { _, rating, fromUser ->
             if (fromUser) {
                 if (rating > 3) {
-                    openPlayStore();
+                    openPlayStore()
                 } else {
-                    finishApp();
+                    finishApp()
                 }
             }
-        });
-        rating_cancel_btn.setOnClickListener(v -> finishApp());
-        ratingDialog.show();
+        }
+        ratingCancelBtn.setOnClickListener { finishApp() }
+        ratingDialog.show()
     }
 
-    private void openPlayStore() {
-        String packageName = getPackageName();
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + packageName));
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    private fun openPlayStore() {
+        val packageName = packageName
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName"))
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         try {
-            startActivity(intent);
-        } catch (ActivityNotFoundException e) {
-            intent = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("https://play.google.com/store/apps/details?id=" + packageName));
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            val webIntent = Intent(Intent.ACTION_VIEW,
+                    Uri.parse("https://play.google.com/store/apps/details?id=$packageName"))
+            webIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             try {
-                startActivity(intent);
-            } catch (ActivityNotFoundException e2) {
-                Toast.makeText(this, "Could not open Play Store", Toast.LENGTH_SHORT).show();
+                startActivity(webIntent)
+            } catch (e2: ActivityNotFoundException) {
+                Toast.makeText(this, "Could not open Play Store", Toast.LENGTH_SHORT).show()
             }
         } finally {
-            finishApp();
+            finishApp()
         }
     }
 
-    private void finishApp() {
-        if (ratingDialog != null && ratingDialog.isShowing()) {
-            ratingDialog.dismiss();
+    private fun finishApp() {
+        if (::ratingDialog.isInitialized && ratingDialog.isShowing) {
+            ratingDialog.dismiss()
         }
-        finish();
+        finish()
     }
+
 }
