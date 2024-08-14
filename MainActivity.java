@@ -248,6 +248,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
 //        LevelNumberTV.setText(getString(R.string.level) + " " + code);
         retrieveQuestionTile();
         retrieveData();
+        if (isFirstRun()) {
+            super.showUpgradeDialog();
+        }
     }
 
     @Override
@@ -390,7 +393,16 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-
+    private boolean isFirstRun() {
+        SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
+        boolean isFirstRun = prefs.getBoolean("isFirstRun", true);
+        if (isFirstRun) {
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("isFirstRun", false);
+            editor.apply();
+        }
+        return isFirstRun;
+    }
     private void NextQuestion() {
         doneButton.setPressed(false);
         revealButton.setEnabled(true);
