@@ -80,8 +80,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
-import android.app.AlertDialog;
-import android.widget.Button;
+
 
 import static android.content.ContentValues.TAG;
 import static com.superquiz.easyquiz.triviastar.SplashActivity.timeInSeconds;
@@ -90,7 +89,7 @@ import static com.google.android.gms.ads.RequestConfiguration.TAG_FOR_CHILD_DIRE
 
 
 
-public class MainActivity extends BaseActivity implements View.OnClickListener {
+public class MainActivity extends Activity implements View.OnClickListener {
     public static char[] user_submit_answer;
     public static boolean readyForReview = false;
     static int currentLetter = 0;
@@ -141,7 +140,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        showUpgradeDialog();
+
 
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -249,9 +248,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //        LevelNumberTV.setText(getString(R.string.level) + " " + code);
         retrieveQuestionTile();
         retrieveData();
-        if (isFirstRun()) {
-            super.showUpgradeDialog();
-        }
     }
 
     @Override
@@ -394,16 +390,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    private boolean isFirstRun() {
-        SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
-        boolean isFirstRun = prefs.getBoolean("isFirstRun", true);
-        if (isFirstRun) {
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putBoolean("isFirstRun", false);
-            editor.apply();
-        }
-        return isFirstRun;
-    }
+
     private void NextQuestion() {
         doneButton.setPressed(false);
         revealButton.setEnabled(true);
